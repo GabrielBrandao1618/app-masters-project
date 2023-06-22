@@ -1,4 +1,4 @@
-import { Game } from "./model/Game";
+import { Game } from "@/model/Game";
 import { GameCard } from "@/components/GameCard";
 
 export default async function Home() {

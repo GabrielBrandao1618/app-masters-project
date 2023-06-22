@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { Game } from "@/app/model/Game";
+import { Game } from "@/model/Game";
 
 type GameCardProps = Game;
 export function GameCard({

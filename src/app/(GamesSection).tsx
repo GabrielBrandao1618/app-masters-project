@@ -89,7 +89,7 @@ export function GamesSection({ query, filterGenre }: GamesSectionProps) {
   if (!response?.ok && !isLoading) {
     return (
       <div className="flex flex-col items-center">
-        <h2>The server can't respond for now. Try again later.</h2>
+        <h2>The server cannot respond for now. Try again later.</h2>
       </div>
     );
   }

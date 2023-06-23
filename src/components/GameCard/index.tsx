@@ -13,7 +13,6 @@ export function GameCard({
   freetogame_profile_url,
   genre,
   platform,
-  publisher,
   release_date,
   short_description,
 }: GameCardProps) {
@@ -45,14 +44,7 @@ export function GameCard({
         </div>
       </Link>
       <div className="mt-1 flex flex-col items-start gap-1">
-        <span className="text-sm">
-          Publisher: {` `}
-          <span className="text-blue-600 font-bold">{publisher}</span>
-        </span>
-        <span className="text-sm">
-          Developer:{" "}
-          <span className="text-purple-600 font-bold">{developer}</span>
-        </span>
+        <span className="text-purple-600 font-bold text-sm">{developer}</span>
         <p className="text-xs text-gray-400">{short_description}</p>
         <span className="bg-rose-600 text-sm text-rose-100 flex-0 px-1 rounded font-bold">
           {genre}

@@ -38,7 +38,7 @@ export async function GamesSection({ query, filterGenre }: GamesSectionProps) {
   let games = useMemo(() => {
     return data.filter(
       (game) =>
-        game.title.includes(query) &&
+        game.title.toLowerCase().includes(query.toLowerCase()) &&
         (filterGenre !== "any" ? game.genre === filterGenre : true)
     );
   }, [query, data, filterGenre]);

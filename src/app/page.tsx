@@ -2,9 +2,11 @@
 
 import { useState, Suspense } from "react";
 import { GamesSection } from "./(GamesSection)";
+import { GameGenre, gameGenres } from "@/model/GameGenre";
 
 export default function Home() {
   const [searchText, setSearchText] = useState("");
+  const [selectedGameGenre, setSelectedGameGenre] = useState<GameGenre>("any");
 
   return (
     <main className="px-20">
@@ -17,9 +19,25 @@ export default function Home() {
           className="bg-gray-800 placeholder:text-gray-500 rounded px-2 py-1"
           placeholder="Search"
         />
+        <select
+          name="game-genre"
+          id="game-genre"
+          value={selectedGameGenre}
+          onChange={(e) => setSelectedGameGenre(e.target.value as GameGenre)}
+          className="bg-gray-800 px-2 py-1 rounded"
+        >
+          {gameGenres.map((genre) => {
+            return (
+              <option value={genre} key={genre}>
+                {genre}
+              </option>
+            );
+          })}
+        </select>
       </section>
       <Suspense>
-        <GamesSection query={searchText} />
+        {/* @ts-expect-error Async Server Component */}
+        <GamesSection query={searchText} filterGenre={selectedGameGenre} />
       </Suspense>
     </main>
   );

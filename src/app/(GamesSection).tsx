@@ -2,11 +2,8 @@
 
 import { GameCard } from "@/components/GameCard";
 import { Game } from "@/model/Game";
+import { GameGenre } from "@/model/GameGenre";
 import { useMemo, useEffect, useState } from "react";
-
-interface GamesSectionProps {
-  query: string;
-}
 
 async function fetchGames() {
   return await fetch(
@@ -20,8 +17,12 @@ async function fetchGames() {
     }
   );
 }
+interface GamesSectionProps {
+  query: string;
+  filterGenre: GameGenre;
+}
 
-export function GamesSection({ query }: GamesSectionProps) {
+export async function GamesSection({ query, filterGenre }: GamesSectionProps) {
   const [data, setData] = useState<Game[]>([]);
   const [status, setStatus] = useState<number | undefined>(undefined);
   const [statusOk, setStatusOk] = useState(true);
@@ -35,11 +36,12 @@ export function GamesSection({ query }: GamesSectionProps) {
     });
   }, []);
   let games = useMemo(() => {
-    if (!!query) {
-      return data.filter((game) => game.title.includes(query));
-    }
-    return data;
-  }, [query, data]);
+    return data.filter(
+      (game) =>
+        game.title.includes(query) &&
+        (filterGenre !== "any" ? game.genre === filterGenre : true)
+    );
+  }, [query, data, filterGenre]);
 
   if ([500, 502, 503, 504, 507, 508, 509].some((code) => code === status)) {
     return (

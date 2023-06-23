@@ -1,31 +1,26 @@
-import { Game } from "@/model/Game";
-import { GameCard } from "@/components/GameCard";
+"use client";
 
-export default async function Home() {
-  const response = await fetch(
-    process.env.API_URL ??
-      "https://games-test-api-81e9fb0d564a.herokuapp.com/api/data/",
-    {
-      headers: {
-        "dev-email-address":
-          process.env.API_URL ?? "biel.brandao2004@gmail.com",
-      },
-    }
-  );
-  if (!response.ok) {
-    throw new Error(
-      "Error trying to search the games. Reload the page to try again"
-    );
-  }
-  const data: Game[] = await response.json();
+import { useState, Suspense } from "react";
+import { GamesSection } from "./(GamesSection)";
+
+export default function Home() {
+  const [searchText, setSearchText] = useState("");
 
   return (
     <main className="px-20">
-      <div className="grid grid-cols-3 gap-10">
-        {data.map((game) => {
-          return <GameCard {...game} />;
-        })}
-      </div>
+      <section className="flex flex-col items-center w-full gap-2">
+        <h2 className="text-3xl font-bold">Welcome</h2>
+        <input
+          type="text"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          className="bg-gray-800 placeholder:text-gray-500 rounded px-2 py-1"
+          placeholder="Search"
+        />
+      </section>
+      <Suspense>
+        <GamesSection query={searchText} />
+      </Suspense>
     </main>
   );
 }

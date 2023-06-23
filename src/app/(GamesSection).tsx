@@ -3,6 +3,7 @@
 import { GameCard } from "@/components/GameCard";
 import { Game } from "@/model/Game";
 import { GameGenre } from "@/model/GameGenre";
+import { useQuery } from "react-query";
 import { useMemo, useEffect, useState } from "react";
 
 async function fetchGames() {
@@ -12,7 +13,7 @@ async function fetchGames() {
     {
       headers: {
         "dev-email-address":
-          process.env.API_URL ?? "biel.brandao2004@gmail.com",
+          process.env.DEV_EMAIL_ADDRESS ?? "biel.brandao2004@gmail.com",
       },
     }
   );
@@ -23,27 +24,53 @@ interface GamesSectionProps {
 }
 
 export async function GamesSection({ query, filterGenre }: GamesSectionProps) {
+  const { data: response, isLoading } = useQuery({
+    queryFn: fetchGames,
+    staleTime: Infinity,
+  });
+
   const [data, setData] = useState<Game[]>([]);
-  const [status, setStatus] = useState<number | undefined>(undefined);
-  const [statusOk, setStatusOk] = useState(true);
+  const [timeoutExcepted, setTimeoutExcepted] = useState(false);
   useEffect(() => {
-    fetchGames().then((response) => {
-      setStatusOk(response.ok);
-      setStatus(response.status);
-      if (response.ok) {
-        response.json().then((games) => setData(games));
-      }
+    response?.json().then((json) => {
+      setData(json);
     });
-  }, []);
+  }, [response]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isLoading) {
+        setTimeoutExcepted(true);
+      }
+    }, 5000);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [isLoading]);
   let games = useMemo(() => {
-    return data.filter(
-      (game) =>
-        game.title.toLowerCase().includes(query.toLowerCase()) &&
-        (filterGenre !== "any" ? game.genre === filterGenre : true)
-    );
+    if (response?.ok) {
+      return data.filter(
+        (game) =>
+          game.title.toLowerCase().includes(query.toLowerCase()) &&
+          (filterGenre !== "any" ? game.genre === filterGenre : true)
+      );
+    }
+    return [];
   }, [query, data, filterGenre]);
 
-  if ([500, 502, 503, 504, 507, 508, 509].some((code) => code === status)) {
+  if (timeoutExcepted) {
+    return (
+      <div className="flex flex-col items-center">
+        <h2>The server delayed to respond. Try again later.</h2>
+      </div>
+    );
+  }
+
+  if (
+    [500, 502, 503, 504, 507, 508, 509].some(
+      (code) => code === response?.status
+    )
+  ) {
     return (
       <div className="flex flex-col items-center">
         <h2>The server failed responding. Try reloading the page.</h2>
@@ -51,7 +78,7 @@ export async function GamesSection({ query, filterGenre }: GamesSectionProps) {
     );
   }
 
-  if (!statusOk) {
+  if (!response?.ok && !isLoading) {
     return (
       <div className="flex flex-col items-center">
         <h2>The server can't respond for now. Try again later.</h2>

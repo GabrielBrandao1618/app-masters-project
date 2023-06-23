@@ -9,7 +9,7 @@ export default function Home() {
   const [selectedGameGenre, setSelectedGameGenre] = useState<GameGenre>("any");
 
   return (
-    <main className="px-20">
+    <main className="md:px-20 px-4">
       <section className="flex flex-col items-center w-full gap-2">
         <h2 className="text-3xl font-bold">Welcome</h2>
         <input

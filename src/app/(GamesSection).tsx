@@ -60,7 +60,7 @@ export async function GamesSection({ query, filterGenre }: GamesSectionProps) {
   }
 
   return (
-    <div className="grid grid-cols-3 gap-10">
+    <div className="md:grid flex flex-col items-center lg:grid-cols-3 md:grid-cols-2 gap-10">
       {games.map((game) => {
         return <GameCard {...game} key={game.id} />;
       })}

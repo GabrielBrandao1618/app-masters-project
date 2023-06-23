@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
-import { PulseLoader } from "react-spinners";
+import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { GamesSection } from "./(GamesSection)";
 import { GameGenre, gameGenres } from "@/model/GameGenre";
@@ -41,20 +40,9 @@ export default function Home() {
           </select>
         </section>
         <div className="mt-4">
-          <Suspense fallback={<GamesSectionFallback />}>
-            {/* @ts-expect-error Async Server Component */}
-            <GamesSection query={searchText} filterGenre={selectedGameGenre} />
-          </Suspense>
+          <GamesSection query={searchText} filterGenre={selectedGameGenre} />
         </div>
       </main>
     </QueryClientProvider>
-  );
-}
-
-function GamesSectionFallback() {
-  return (
-    <div className="flex justify-center">
-      <PulseLoader color="#ffffff" size={10} />
-    </div>
   );
 }

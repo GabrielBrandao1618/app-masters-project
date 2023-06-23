@@ -4,6 +4,7 @@ import { GameCard } from "@/components/GameCard";
 import { Game } from "@/model/Game";
 import { GameGenre } from "@/model/GameGenre";
 import { useQuery } from "react-query";
+import { PulseLoader } from "react-spinners";
 import { useMemo, useEffect, useState } from "react";
 
 async function fetchGames() {
@@ -23,7 +24,7 @@ interface GamesSectionProps {
   filterGenre: GameGenre;
 }
 
-export async function GamesSection({ query, filterGenre }: GamesSectionProps) {
+export function GamesSection({ query, filterGenre }: GamesSectionProps) {
   const { data: response, isLoading } = useQuery({
     queryFn: fetchGames,
     staleTime: Infinity,
@@ -62,6 +63,13 @@ export async function GamesSection({ query, filterGenre }: GamesSectionProps) {
     return (
       <div className="flex flex-col items-center">
         <h2>The server delayed to respond. Try again later.</h2>
+      </div>
+    );
+  }
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center">
+        <PulseLoader color="#ffffff" size={10} />
       </div>
     );
   }

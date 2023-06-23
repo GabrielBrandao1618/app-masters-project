@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 import { Game } from "@/model/Game";
 
@@ -24,14 +25,23 @@ export function GameCard({
         target="_blank"
         className="flex-1 w-full flex flex-col"
       >
-        <div className="relative flex-1 overflow-hidden rounded-lg">
-          <Image
-            src={thumbnail}
-            alt={`The thumbnail of the game ${title}`}
-            fill
-            className="object-cover"
-            sizes="36"
-          />
+        <div className="flex-1 overflow-hidden relative rounded-lg">
+          <motion.div
+            className="relative h-full"
+            whileHover={{ scale: 1.1 }}
+            transition={{
+              duration: 0.4,
+              ease: "easeInOut",
+            }}
+          >
+            <Image
+              src={thumbnail}
+              alt={`The thumbnail of the game ${title}`}
+              fill
+              className="object-cover"
+              sizes="36"
+            />
+          </motion.div>
         </div>
       </Link>
       <div className="mt-1 flex flex-col items-start gap-1">

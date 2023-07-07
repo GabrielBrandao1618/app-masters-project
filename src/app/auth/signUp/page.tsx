@@ -1,19 +1,30 @@
 "use client";
 
-import { FormEvent } from "react";
 import Z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
+import { FirebaseError } from "firebase/app";
+import { useState } from "react";
 
 export default function SignUpPage() {
+  const { replace } = useRouter();
+  const [errorLabelText, setErrorLabelText] = useState("");
   const { signUp } = useAuth();
-  const { register, handleSubmit, reset } = useForm<FormSchema>({
+  const { register, handleSubmit } = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
   });
   async function onFormSubmit(data: FormSchema) {
-    await signUp(data.email, data.password);
-    reset();
+    try {
+      await signUp(data.email, data.password);
+    } catch (err) {
+      if (err instanceof FirebaseError) {
+        setErrorLabelText(err.code);
+      }
+      return;
+    }
+    replace("/");
   }
   return (
     <main className="flex items-center justify-center flex-col">
@@ -38,7 +49,7 @@ export default function SignUpPage() {
             {...register("password")}
           />
           <input
-            type="passwordz"
+            type="password"
             placeholder="confirm your password"
             className="bg-transparent border-gray-800 border px-2 py-1 rounded w-full"
             {...register("confirmPassword")}
@@ -49,6 +60,7 @@ export default function SignUpPage() {
           >
             Sign in
           </button>
+          <span>{errorLabelText}</span>
         </div>
       </form>
     </main>

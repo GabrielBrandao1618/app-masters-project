@@ -17,6 +17,7 @@ import {
 } from "firebase/auth";
 import { firebaseApp } from "@/lib/firebase";
 import { User } from "@/model/User";
+import { FirebaseError } from "firebase/app";
 
 interface AuthContextValue {
   signIn: (email: string, password: string) => Promise<void>;

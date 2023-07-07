@@ -4,22 +4,27 @@ import Z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { FirebaseError } from "firebase/app";
 
 export default function SignInPage() {
-  const { handleSubmit, register, reset } = useForm<FormSchema>({
+  const { replace } = useRouter();
+  const { handleSubmit, register } = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
   });
+  const [errorLabelText, setErrorLabelText] = useState("");
   const { signIn } = useAuth();
   async function onFormSubmit(data: FormSchema) {
     try {
       await signIn(data.email, data.password);
     } catch (err) {
-      if (err instanceof Error) {
-        console.log(err.message);
+      if (err instanceof FirebaseError) {
+        setErrorLabelText(err.code);
       }
+      return;
     }
-
-    reset();
+    replace("/");
   }
   return (
     <main className="flex items-center justify-center flex-col">
@@ -49,6 +54,7 @@ export default function SignInPage() {
           >
             Sign in
           </button>
+          <span>{errorLabelText}</span>
         </div>
       </form>
     </main>

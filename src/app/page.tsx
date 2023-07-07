@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { GamesSection } from "./(GamesSection)";
+import { GamesSection } from "@/components/layout/GamesSection";
 import { GameGenre, gameGenres } from "@/model/GameGenre";
 import { useAuth } from "@/contexts/AuthContext";
 

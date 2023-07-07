@@ -43,8 +43,12 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     });
   }, []);
   const signUp = useCallback(async (email: string, password: string) => {
-    const a = await createUserWithEmailAndPassword(auth, email, password);
-    console.log(a);
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    setUser({
+      displayName: result.user.displayName,
+      email: result.user.email,
+      uid: result.user.uid,
+    });
   }, []);
   const signOut = useCallback(async () => {
     await firebaseSignOut(auth);

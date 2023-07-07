@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function SignInPage() {
-  const { handleSubmit, register } = useForm<FormSchema>({
+  const { handleSubmit, register, reset } = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
   });
   const { signIn } = useAuth();
@@ -18,6 +18,8 @@ export default function SignInPage() {
         console.log(err.message);
       }
     }
+
+    reset();
   }
   return (
     <main className="flex items-center justify-center flex-col">

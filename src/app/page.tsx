@@ -4,10 +4,12 @@ import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { GamesSection } from "./(GamesSection)";
 import { GameGenre, gameGenres } from "@/model/GameGenre";
+import { useAuth } from "@/contexts/AuthContext";
 
 const reactQueryClient = new QueryClient();
 
 export default function Home() {
+  const { user } = useAuth();
   const [searchText, setSearchText] = useState("");
   const [selectedGameGenre, setSelectedGameGenre] = useState<GameGenre>("any");
 

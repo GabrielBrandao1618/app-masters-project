@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { GamesSection } from "@/components/layout/GamesSection";
 import { GameGenre, gameGenres } from "@/model/GameGenre";
 import { useAuth } from "@/contexts/AuthContext";
+import { Header } from "@/components/Header";
 
 const reactQueryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ export default function Home() {
 
   return (
     <QueryClientProvider client={reactQueryClient}>
+      <Header />
       <main className="md:px-20 px-4 flex flex-col">
         <section className="flex flex-col items-center w-full gap-2 py-16">
           <h2 className="text-4xl font-bold mb-4">App Masters game store</h2>

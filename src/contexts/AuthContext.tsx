@@ -52,6 +52,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   }, []);
   const signOut = useCallback(async () => {
     await firebaseSignOut(auth);
+    setUser(undefined);
   }, []);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (snapshot) => {

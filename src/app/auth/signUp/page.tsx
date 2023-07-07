@@ -1,8 +1,8 @@
 "use client";
 
-import { FormEvent, useRef } from "react";
+import { FormEvent } from "react";
 
-export default function SignInPage() {
+export default function SignUpPage() {
   async function onFormSubmit(e: FormEvent) {
     e.preventDefault();
   }
@@ -10,7 +10,7 @@ export default function SignInPage() {
     <main className="flex items-center justify-center flex-col">
       <form onSubmit={onFormSubmit} className="px-2 py-10 w-full max-w-md">
         <h1 className="text-5xl font-bold w-full text-center mb-12">
-          Sign <span className="text-blue-600">in</span>
+          Sign <span className="text-blue-600">up</span>
         </h1>
         <div className="flex flex-col gap-2 w-full">
           <input
@@ -22,6 +22,12 @@ export default function SignInPage() {
           <input
             type="text"
             placeholder="your password"
+            className="bg-transparent border-gray-800 border px-2 py-1 rounded w-full"
+            required
+          />
+          <input
+            type="text"
+            placeholder="confirm your password"
             className="bg-transparent border-gray-800 border px-2 py-1 rounded w-full"
             required
           />

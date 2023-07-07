@@ -8,7 +8,7 @@ import { PulseLoader } from "react-spinners";
 import { useMemo, useEffect, useState } from "react";
 
 async function fetchGames() {
-  return await fetch(
+  const response = await fetch(
     process.env.API_URL ??
       "https://games-test-api-81e9fb0d564a.herokuapp.com/api/data/",
     {
@@ -18,6 +18,11 @@ async function fetchGames() {
       },
     }
   );
+  const json = await response.json();
+  return {
+    json: json as Game[],
+    response: response,
+  };
 }
 interface GamesSectionProps {
   query: string;
@@ -25,18 +30,12 @@ interface GamesSectionProps {
 }
 
 export function GamesSection({ query, filterGenre }: GamesSectionProps) {
-  const { data: response, isLoading } = useQuery({
+  const { data: queryResult, isLoading } = useQuery({
     queryFn: fetchGames,
     staleTime: Infinity,
   });
 
-  const [data, setData] = useState<Game[]>([]);
   const [timeoutExcepted, setTimeoutExcepted] = useState(false);
-  useEffect(() => {
-    response?.json().then((json) => {
-      setData(json);
-    });
-  }, [response]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -49,15 +48,15 @@ export function GamesSection({ query, filterGenre }: GamesSectionProps) {
     };
   }, [isLoading]);
   let games = useMemo(() => {
-    if (response?.ok) {
-      return data.filter(
+    if (queryResult?.response?.ok) {
+      return queryResult.json.filter(
         (game) =>
           game.title.toLowerCase().includes(query.toLowerCase()) &&
           (filterGenre !== "any" ? game.genre === filterGenre : true)
       );
     }
     return [];
-  }, [query, data, filterGenre]);
+  }, [query, queryResult, filterGenre]);
 
   if (timeoutExcepted) {
     return (
@@ -76,7 +75,7 @@ export function GamesSection({ query, filterGenre }: GamesSectionProps) {
 
   if (
     [500, 502, 503, 504, 507, 508, 509].some(
-      (code) => code === response?.status
+      (code) => code === queryResult?.response?.status
     )
   ) {
     return (
@@ -86,7 +85,7 @@ export function GamesSection({ query, filterGenre }: GamesSectionProps) {
     );
   }
 
-  if (!response?.ok && !isLoading) {
+  if (!queryResult?.response?.ok && !isLoading) {
     return (
       <div className="flex flex-col items-center">
         <h2>The server cannot respond for now. Try again later.</h2>

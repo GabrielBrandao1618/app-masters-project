@@ -14,3 +14,7 @@
 - Filter by genre
 - Search by title
 - 5 Seconds load timeout
+
+## References
+
+- https://firebase.google.com/docs/auth/admin/errors?hl=pt-br

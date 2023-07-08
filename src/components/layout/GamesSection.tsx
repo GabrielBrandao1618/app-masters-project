@@ -6,6 +6,7 @@ import { GameGenre } from "@/model/GameGenre";
 import { useQuery } from "react-query";
 import { PulseLoader } from "react-spinners";
 import { useMemo, useEffect, useState } from "react";
+import { useUserGameData } from "@/contexts/UserGameDataContext";
 
 async function fetchGames() {
   const response = await fetch(
@@ -30,6 +31,7 @@ interface GamesSectionProps {
 }
 
 export function GamesSection({ query, filterGenre }: GamesSectionProps) {
+  const { isGameFavorite, getGameRating } = useUserGameData();
   const { data: queryResult, isLoading } = useQuery({
     queryFn: fetchGames,
     staleTime: Infinity,
@@ -96,7 +98,14 @@ export function GamesSection({ query, filterGenre }: GamesSectionProps) {
   return (
     <div className="md:grid flex flex-col items-center lg:grid-cols-3 md:grid-cols-2 gap-10">
       {games.map((game) => {
-        return <GameCard {...game} key={game.id} />;
+        return (
+          <GameCard
+            {...game}
+            isFavorite={isGameFavorite(game.id)}
+            rating={getGameRating(game.id)}
+            key={game.id}
+          />
+        );
       })}
     </div>
   );

@@ -14,7 +14,10 @@ import { unsubscribe } from "diagnostics_channel";
 
 const firebaseDb = getDatabase(firebaseApp);
 
-type GameCardProps = Game;
+type GameCardProps = Game & {
+  isFavorite: boolean;
+  rating: number;
+};
 export function GameCard({
   title,
   thumbnail,
@@ -27,36 +30,11 @@ export function GameCard({
   short_description,
   id,
   publisher,
+  isFavorite,
+  rating,
 }: GameCardProps) {
   const { user } = useAuth();
   const { replace } = useRouter();
-  const [currentRating, setCurrentRating] = useState(0);
-  const [isFavorite, setIsFavorite] = useState(false);
-
-  useEffect(() => {
-    const unsubscribeFns: (() => void)[] = [];
-    if (!!user) {
-      const favoriteRef = ref(firebaseDb, `${user.uid}/favorites/${id}`);
-      const unsubscribeFavorite = onValue(favoriteRef, (snapshot) => {
-        if (snapshot.val() !== null) {
-          return setIsFavorite(true);
-        }
-        setIsFavorite(false);
-      });
-      unsubscribeFns.push(unsubscribeFavorite);
-      const ratingRef = ref(firebaseDb, `${user.uid}/ratings/${id}`);
-      const unsubscribeRating = onValue(ratingRef, (snapshot) => {
-        setCurrentRating(snapshot.val() ?? 0);
-      });
-      unsubscribeFns.push(unsubscribeRating);
-    }
-
-    return () => {
-      for (const fn of unsubscribeFns) {
-        fn();
-      }
-    };
-  }, [user]);
 
   async function toggleIsFavorite() {
     if (!!user) {
@@ -126,7 +104,7 @@ export function GameCard({
             weight={isFavorite ? "fill" : "regular"}
             onClick={toggleIsFavorite}
           />
-          <StarRater value={currentRating} setValue={saveRating} />
+          <StarRater value={rating} setValue={saveRating} />
         </div>
         <span className="bg-rose-600 text-sm text-rose-100 flex-0 px-1 rounded font-bold">
           {genre}

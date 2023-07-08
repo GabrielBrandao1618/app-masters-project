@@ -7,6 +7,7 @@ import { useQuery } from "react-query";
 import { PulseLoader } from "react-spinners";
 import { useMemo, useEffect, useState } from "react";
 import { useUserGameData } from "@/contexts/UserGameDataContext";
+import { SortingMethod } from "@/model/SortingMethod";
 
 async function fetchGames() {
   const response = await fetch(
@@ -28,10 +29,15 @@ async function fetchGames() {
 interface GamesSectionProps {
   query: string;
   filterGenre: GameGenre;
+  sortingMethod: SortingMethod;
 }
 
-export function GamesSection({ query, filterGenre }: GamesSectionProps) {
-  const { isGameFavorite, getGameRating } = useUserGameData();
+export function GamesSection({
+  query,
+  filterGenre,
+  sortingMethod,
+}: GamesSectionProps) {
+  const { isGameFavorite, getGameRating, ratings } = useUserGameData();
   const { data: queryResult, isLoading } = useQuery({
     queryFn: fetchGames,
     staleTime: Infinity,
@@ -49,16 +55,29 @@ export function GamesSection({ query, filterGenre }: GamesSectionProps) {
       clearTimeout(timeout);
     };
   }, [isLoading]);
-  let games = useMemo(() => {
+
+  const games = useMemo(() => {
     if (queryResult?.response?.ok) {
-      return queryResult.json.filter(
-        (game) =>
+      let data = queryResult.json.filter((game) => {
+        return (
           game.title.toLowerCase().includes(query.toLowerCase()) &&
           (filterGenre !== "any" ? game.genre === filterGenre : true)
-      );
+        );
+      });
+      data.sort((a, b) => {
+        if (sortingMethod == SortingMethod.RatingDecrescent) {
+          return getGameRating(b.id) - getGameRating(a.id);
+        }
+        if (sortingMethod == SortingMethod.RatingCrescent) {
+          return getGameRating(a.id) - getGameRating(b.id);
+        }
+        return 0;
+      });
+
+      return data;
     }
     return [];
-  }, [query, queryResult, filterGenre]);
+  }, [query, queryResult, filterGenre, sortingMethod, ratings]);
 
   if (timeoutExcepted) {
     return (

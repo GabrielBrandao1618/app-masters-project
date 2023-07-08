@@ -1,16 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { GamesSection } from "@/components/layout/GamesSection";
 import { GameGenre, gameGenres } from "@/model/GameGenre";
 import { Header } from "@/components/Header";
+import { SortingMethod, sortingMethods } from "@/model/SortingMethod";
 
 const reactQueryClient = new QueryClient();
+
+const sortingMethodText = new Map<SortingMethod, string>([
+  [SortingMethod.Any, "Any"],
+  [SortingMethod.RatingCrescent, "Rating crescent"],
+  [SortingMethod.RatingDecrescent, "Rating decrescent"],
+]);
+function getSortingMethodText(key: SortingMethod) {
+  return sortingMethodText.get(key) as string;
+}
 
 export default function Home() {
   const [searchText, setSearchText] = useState("");
   const [selectedGameGenre, setSelectedGameGenre] = useState<GameGenre>("any");
+  const [selectedSortingMethod, setSelectedSortingMethod] =
+    useState<SortingMethod>(SortingMethod.Any);
 
   return (
     <QueryClientProvider client={reactQueryClient}>
@@ -52,22 +64,30 @@ export default function Home() {
                 name="sort-method"
                 id="sort-method"
                 className="bg-transparent flex-1 font-bold text-right"
+                value={selectedSortingMethod}
+                onChange={(e) =>
+                  setSelectedSortingMethod(
+                    e.target.value as unknown as SortingMethod
+                  )
+                }
               >
-                {["any", "rating-crescent", "rating-decrescent"].map(
-                  (method) => {
-                    return (
-                      <option value="method" key={method}>
-                        {method}
-                      </option>
-                    );
-                  }
-                )}
+                {sortingMethods.map((method) => {
+                  return (
+                    <option value={method} key={method}>
+                      {getSortingMethodText(method)}
+                    </option>
+                  );
+                })}
               </select>
             </div>
           </div>
         </section>
         <div className="mt-4">
-          <GamesSection query={searchText} filterGenre={selectedGameGenre} />
+          <GamesSection
+            query={searchText}
+            filterGenre={selectedGameGenre}
+            sortingMethod={selectedSortingMethod}
+          />
         </div>
       </main>
     </QueryClientProvider>

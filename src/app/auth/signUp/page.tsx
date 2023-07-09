@@ -43,25 +43,34 @@ export default function SignUpPage() {
           <h3 className="mb-12 w-full text-center text-gray-400">
             App masters game store
           </h3>
-          <div className="flex flex-col gap-2 w-full">
-            <input
-              type="text"
-              placeholder="youremail@gmail.com"
-              className="bg-transparent border-gray-800 border px-3 py-2 rounded w-full"
-              {...register("email")}
-            />
-            <input
-              type="password"
-              placeholder="your password"
-              className="bg-transparent border-gray-800 border px-3 py-2 rounded w-full"
-              {...register("password")}
-            />
-            <input
-              type="password"
-              placeholder="confirm your password"
-              className="bg-transparent border-gray-800 border px-3 py-2 rounded w-full"
-              {...register("confirmPassword")}
-            />
+          <div className="flex flex-col gap-3 w-full">
+            <div>
+              <label htmlFor="email">Email</label>
+              <input
+                type="text"
+                placeholder="youremail@gmail.com"
+                className="bg-transparent border-gray-800 border px-3 py-2 rounded w-full"
+                {...register("email")}
+              />
+            </div>
+            <div>
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                placeholder="your password"
+                className="bg-transparent border-gray-800 border px-3 py-2 rounded w-full"
+                {...register("password")}
+              />
+            </div>
+            <div>
+              <label htmlFor="confirmPassword">Confirm password</label>
+              <input
+                type="password"
+                placeholder="confirm your password"
+                className="bg-transparent border-gray-800 border px-3 py-2 rounded w-full"
+                {...register("confirmPassword")}
+              />
+            </div>
             <button
               type="submit"
               className="bg-blue-600 px-3 py-2 rounded hover:bg-blue-700 transition-all font-bold"

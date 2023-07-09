@@ -22,18 +22,18 @@ export default function Home() {
   return (
     <QueryClientProvider client={reactQueryClient}>
       <Header />
-      <main className="md:px-20 px-4 flex flex-col">
-        <section className="flex flex-col items-center w-full gap-2 py-16">
+      <main className="md:px-20 px-4 flex flex-col items-center">
+        <section className="flex flex-col items-center w-full max-w-[640px] gap-2 py-16">
           <h2 className="text-4xl font-bold mb-4">App Masters game store</h2>
           <input
             type="text"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            className="border-gray-500 border bg-transparent placeholder:text-gray-500 rounded px-2 py-1 w-full max-w-[280px]"
+            className="border-gray-500 border bg-transparent placeholder:text-gray-500 rounded px-3 py-2 w-full"
             placeholder="Search by game title"
           />
-          <div className="grid grid-cols-2 gap-2">
-            <div className="flex bg-transparent border border-gray-500 px-4 py-1 gap-2 rounded w-full max-w-[280px]">
+          <div className="flex w-full gap-2">
+            <div className="flex bg-transparent border border-gray-500 px-4 py-1 gap-2 rounded flex-1">
               <span>Genre</span>
               <select
                 name="game-genre"
@@ -53,7 +53,7 @@ export default function Home() {
                 })}
               </select>
             </div>
-            <div className="flex bg-transparent border border-gray-500 px-4 py-1 gap-2 rounded w-full max-w-[280px]">
+            <div className="flex bg-transparent border border-gray-500 px-4 py-1 gap-2 rounded flex-1">
               <span>Sort by</span>
               <select
                 name="sort-method"

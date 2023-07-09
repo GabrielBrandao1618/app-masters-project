@@ -51,8 +51,8 @@ export default function SignInPage() {
             <div>
               <label htmlFor="email">Email</label>
               <input
-                type="text"
-                placeholder="youremail@gmail.com"
+                type="email"
+                placeholder="john.doe@email.com"
                 className={`bg-transparent  ${
                   errors.email !== undefined
                     ? "border-red-500"

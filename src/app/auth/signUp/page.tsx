@@ -51,8 +51,8 @@ export default function SignUpPage() {
             <div>
               <label htmlFor="email">Email</label>
               <input
-                type="text"
-                placeholder="youremail@gmail.com"
+                type="email"
+                placeholder="john.doe@email.com"
                 className={`bg-transparent border px-3 py-2 rounded w-full ${
                   errors.email !== undefined
                     ? "border-red-500"

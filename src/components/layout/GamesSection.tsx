@@ -102,7 +102,7 @@ export function GamesSection({
   }
 
   return (
-    <div className="md:grid flex flex-col items-center lg:grid-cols-3 md:grid-cols-2 gap-10">
+    <div className="md:grid flex flex-col items-center lg:grid-cols-3 md:grid-cols-2 gap-10 py-8">
       {games.map((game) => {
         return (
           <GameCard

@@ -13,7 +13,11 @@ import { getFirebaseErrorMessage } from "@/lib/utils/firebaseErrorMessage";
 
 export default function SignInPage() {
   const { replace } = useRouter();
-  const { handleSubmit, register } = useForm<FormSchema>({
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
   });
   const [errorLabelText, setErrorLabelText] = useState("");
@@ -49,18 +53,32 @@ export default function SignInPage() {
               <input
                 type="text"
                 placeholder="youremail@gmail.com"
-                className="bg-transparent border-gray-800 border px-3 py-2 rounded w-full"
+                className={`bg-transparent  ${
+                  errors.email !== undefined
+                    ? "border-red-500"
+                    : "border-gray-800"
+                } border px-3 py-2 rounded w-full`}
                 {...register("email")}
               />
+              <span className="text-red-500 text-sm">
+                {errors.email?.message}
+              </span>
             </div>
             <div>
               <label htmlFor="password">Password</label>
               <input
                 type="password"
                 placeholder="your password"
-                className="bg-transparent border-gray-800 border px-3 py-2 rounded w-full"
+                className={`bg-transparent ${
+                  errors.password !== undefined
+                    ? "border-red-500"
+                    : "border-gray-800"
+                } border px-3 py-2 rounded w-full`}
                 {...register("password")}
               />
+              <span className="text-red-500 text-sm">
+                {errors.password?.message}
+              </span>
             </div>
             <button
               type="submit"
@@ -86,6 +104,6 @@ export default function SignInPage() {
 
 const formSchema = Z.object({
   email: Z.string().email(),
-  password: Z.string().min(4, "Password must have at least 4 characters"),
+  password: Z.string().min(6, "Password must contain at least 6 characters"),
 });
 type FormSchema = Z.TypeOf<typeof formSchema>;

@@ -15,7 +15,11 @@ export default function SignUpPage() {
   const { replace } = useRouter();
   const [errorLabelText, setErrorLabelText] = useState("");
   const { signUp } = useAuth();
-  const { register, handleSubmit } = useForm<FormSchema>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
   });
   async function onFormSubmit(data: FormSchema) {
@@ -49,27 +53,48 @@ export default function SignUpPage() {
               <input
                 type="text"
                 placeholder="youremail@gmail.com"
-                className="bg-transparent border-gray-800 border px-3 py-2 rounded w-full"
+                className={`bg-transparent border px-3 py-2 rounded w-full ${
+                  errors.email !== undefined
+                    ? "border-red-500"
+                    : "border-gray-800"
+                }`}
                 {...register("email")}
               />
+              <span className="text-red-500 text-sm">
+                {errors.email?.message}
+              </span>
             </div>
             <div>
               <label htmlFor="password">Password</label>
               <input
                 type="password"
                 placeholder="your password"
-                className="bg-transparent border-gray-800 border px-3 py-2 rounded w-full"
+                className={`bg-transparent border-gray-800 border px-3 py-2 rounded w-full ${
+                  errors.password !== undefined
+                    ? "border-red-500"
+                    : "border-gray-800"
+                }`}
                 {...register("password")}
               />
+              <span className="text-red-500 text-sm">
+                {errors.password?.message}
+              </span>
             </div>
             <div>
               <label htmlFor="confirmPassword">Confirm password</label>
               <input
                 type="password"
                 placeholder="confirm your password"
-                className="bg-transparent border-gray-800 border px-3 py-2 rounded w-full"
+                className={`bg-transparent border px-3 py-2 rounded w-full ${
+                  errors.confirmPassword !== undefined
+                    ? "border-red-500"
+                    : "border-gray-800"
+                }`}
                 {...register("confirmPassword")}
               />
+              <span className="text-red-500 text-sm">
+                {errors.confirmPassword?.message}
+              </span>
             </div>
             <button
               type="submit"
@@ -95,7 +120,10 @@ export default function SignUpPage() {
 
 const formSchema = Z.object({
   email: Z.string().email(),
-  password: Z.string().min(4),
+  password: Z.string().min(
+    6,
+    "Your password must contain at least 6 characters"
+  ),
   confirmPassword: Z.string(),
 }).refine(
   (data) => {
@@ -103,7 +131,7 @@ const formSchema = Z.object({
   },
   {
     path: ["confirmPassword"],
-    message: "Password confirmation must match the password",
+    message: "Password confirmation must match the given password",
   }
 );
 type FormSchema = Z.TypeOf<typeof formSchema>;

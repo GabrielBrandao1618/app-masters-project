@@ -5,10 +5,13 @@ import { Game } from "@/model/Game";
 import { GameGenre } from "@/model/GameGenre";
 import { useQuery } from "react-query";
 import { PulseLoader } from "react-spinners";
-import { useMemo, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useUserGameData } from "@/contexts/UserGameDataContext";
+import { SortingMethod } from "@/model/SortingMethod";
+import { useGameQuery } from "@/hooks/useGameQuery";
 
 async function fetchGames() {
-  return await fetch(
+  const response = await fetch(
     process.env.API_URL ??
       "https://games-test-api-81e9fb0d564a.herokuapp.com/api/data/",
     {
@@ -18,25 +21,33 @@ async function fetchGames() {
       },
     }
   );
+  let data: Game[] = [];
+  if (response.ok) {
+    data = await response.json();
+  }
+  return {
+    json: data,
+    response: response,
+  };
 }
 interface GamesSectionProps {
   query: string;
   filterGenre: GameGenre;
+  sortingMethod: SortingMethod;
 }
 
-export function GamesSection({ query, filterGenre }: GamesSectionProps) {
-  const { data: response, isLoading } = useQuery({
+export function GamesSection({
+  query,
+  filterGenre,
+  sortingMethod,
+}: GamesSectionProps) {
+  const { isGameFavorite, getGameRating, ratings } = useUserGameData();
+  const { data: queryResult, isLoading } = useQuery({
     queryFn: fetchGames,
     staleTime: Infinity,
   });
 
-  const [data, setData] = useState<Game[]>([]);
   const [timeoutExcepted, setTimeoutExcepted] = useState(false);
-  useEffect(() => {
-    response?.json().then((json) => {
-      setData(json);
-    });
-  }, [response]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -48,17 +59,13 @@ export function GamesSection({ query, filterGenre }: GamesSectionProps) {
       clearTimeout(timeout);
     };
   }, [isLoading]);
-  let games = useMemo(() => {
-    if (response?.ok) {
-      return data.filter(
-        (game) =>
-          game.title.toLowerCase().includes(query.toLowerCase()) &&
-          (filterGenre !== "any" ? game.genre === filterGenre : true)
-      );
-    }
-    return [];
-  }, [query, data, filterGenre]);
 
+  const games = useGameQuery(
+    queryResult?.json ?? [],
+    filterGenre,
+    sortingMethod,
+    query
+  );
   if (timeoutExcepted) {
     return (
       <div className="flex flex-col items-center">
@@ -76,7 +83,7 @@ export function GamesSection({ query, filterGenre }: GamesSectionProps) {
 
   if (
     [500, 502, 503, 504, 507, 508, 509].some(
-      (code) => code === response?.status
+      (code) => code === queryResult?.response?.status
     )
   ) {
     return (
@@ -86,7 +93,7 @@ export function GamesSection({ query, filterGenre }: GamesSectionProps) {
     );
   }
 
-  if (!response?.ok && !isLoading) {
+  if (!queryResult?.response?.ok && !isLoading) {
     return (
       <div className="flex flex-col items-center">
         <h2>The server cannot respond for now. Try again later.</h2>
@@ -97,7 +104,14 @@ export function GamesSection({ query, filterGenre }: GamesSectionProps) {
   return (
     <div className="md:grid flex flex-col items-center lg:grid-cols-3 md:grid-cols-2 gap-10">
       {games.map((game) => {
-        return <GameCard {...game} key={game.id} />;
+        return (
+          <GameCard
+            {...game}
+            isFavorite={isGameFavorite(game.id)}
+            rating={getGameRating(game.id)}
+            key={game.id}
+          />
+        );
       })}
     </div>
   );

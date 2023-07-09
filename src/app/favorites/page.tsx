@@ -1,30 +1,39 @@
 "use client";
 
-import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { GamesSection } from "@/components/layout/GamesSection";
-import { GameGenre, gameGenres } from "@/model/GameGenre";
+import { GameCard } from "@/components/GameCard";
 import { Header } from "@/components/Header";
+import { useAuth } from "@/contexts/AuthContext";
+import { useUserGameData } from "@/contexts/UserGameDataContext";
+import { useGameQuery } from "@/hooks/useGameQuery";
+import { GameGenre, gameGenres } from "@/model/GameGenre";
 import {
   SortingMethod,
   getSortingMethodText,
   sortingMethods,
 } from "@/model/SortingMethod";
+import { useState } from "react";
 
-const reactQueryClient = new QueryClient();
-
-export default function Home() {
+export default function FavoritesPage() {
+  const { favoriteGames, isGameFavorite, getGameRating } = useUserGameData();
   const [searchText, setSearchText] = useState("");
   const [selectedGameGenre, setSelectedGameGenre] = useState<GameGenre>("any");
   const [selectedSortingMethod, setSelectedSortingMethod] =
     useState<SortingMethod>(SortingMethod.None);
 
+  const { user } = useAuth();
+
+  const filteredFavoriteGames = useGameQuery(
+    favoriteGames,
+    selectedGameGenre,
+    selectedSortingMethod,
+    searchText
+  );
   return (
-    <QueryClientProvider client={reactQueryClient}>
+    <>
       <Header />
-      <main className="md:px-20 px-4 flex flex-col items-center">
+      <main className="md:px-20 px-4 flex flex-col items-center gap-10">
         <section className="flex flex-col items-center w-full max-w-[640px] gap-2 py-16">
-          <h2 className="text-4xl font-bold mb-4">App Masters game store</h2>
+          <h1 className="text-4xl font-bold mb-4">Favorite games</h1>
           <input
             type="text"
             value={searchText}
@@ -77,14 +86,31 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <div className="mt-4">
-          <GamesSection
-            query={searchText}
-            filterGenre={selectedGameGenre}
-            sortingMethod={selectedSortingMethod}
-          />
-        </div>
+        {favoriteGames.length > 0 ? (
+          <div className="md:grid flex flex-col items-center lg:grid-cols-3 md:grid-cols-2 gap-10">
+            {filteredFavoriteGames.map((game) => {
+              return (
+                <GameCard
+                  {...game}
+                  isFavorite={isGameFavorite(game.id)}
+                  rating={getGameRating(game.id)}
+                  key={game.id}
+                />
+              );
+            })}
+          </div>
+        ) : !!user ? (
+          <div>
+            <h2>
+              No games found. Try adding some of your favorite games here.
+            </h2>
+          </div>
+        ) : (
+          <div>
+            <h2>No favorite games found. You are currently not logged in.</h2>
+          </div>
+        )}
       </main>
-    </QueryClientProvider>
+    </>
   );
 }

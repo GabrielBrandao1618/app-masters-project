@@ -5,9 +5,10 @@ import { Game } from "@/model/Game";
 import { GameGenre } from "@/model/GameGenre";
 import { useQuery } from "react-query";
 import { PulseLoader } from "react-spinners";
-import { useMemo, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useUserGameData } from "@/contexts/UserGameDataContext";
 import { SortingMethod } from "@/model/SortingMethod";
+import { useGameQuery } from "@/hooks/useGameQuery";
 
 async function fetchGames() {
   const response = await fetch(
@@ -20,9 +21,12 @@ async function fetchGames() {
       },
     }
   );
-  const json = await response.json();
+  let data: Game[] = [];
+  if (response.ok) {
+    data = await response.json();
+  }
   return {
-    json: json as Game[],
+    json: data,
     response: response,
   };
 }
@@ -56,29 +60,12 @@ export function GamesSection({
     };
   }, [isLoading]);
 
-  const games = useMemo(() => {
-    if (queryResult?.response?.ok) {
-      let data = queryResult.json.filter((game) => {
-        return (
-          game.title.toLowerCase().includes(query.toLowerCase()) &&
-          (filterGenre !== "any" ? game.genre === filterGenre : true)
-        );
-      });
-      data.sort((a, b) => {
-        if (sortingMethod == SortingMethod.RatingDecrescent) {
-          return getGameRating(b.id) - getGameRating(a.id);
-        }
-        if (sortingMethod == SortingMethod.RatingCrescent) {
-          return getGameRating(a.id) - getGameRating(b.id);
-        }
-        return 0;
-      });
-
-      return data;
-    }
-    return [];
-  }, [query, queryResult, filterGenre, sortingMethod, ratings]);
-
+  const games = useGameQuery(
+    queryResult?.json ?? [],
+    filterGenre,
+    sortingMethod,
+    query
+  );
   if (timeoutExcepted) {
     return (
       <div className="flex flex-col items-center">

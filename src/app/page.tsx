@@ -5,24 +5,19 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { GamesSection } from "@/components/layout/GamesSection";
 import { GameGenre, gameGenres } from "@/model/GameGenre";
 import { Header } from "@/components/Header";
-import { SortingMethod, sortingMethods } from "@/model/SortingMethod";
+import {
+  SortingMethod,
+  getSortingMethodText,
+  sortingMethods,
+} from "@/model/SortingMethod";
 
 const reactQueryClient = new QueryClient();
-
-const sortingMethodText = new Map<SortingMethod, string>([
-  [SortingMethod.Any, "Any"],
-  [SortingMethod.RatingCrescent, "Rating crescent"],
-  [SortingMethod.RatingDecrescent, "Rating decrescent"],
-]);
-function getSortingMethodText(key: SortingMethod) {
-  return sortingMethodText.get(key) as string;
-}
 
 export default function Home() {
   const [searchText, setSearchText] = useState("");
   const [selectedGameGenre, setSelectedGameGenre] = useState<GameGenre>("any");
   const [selectedSortingMethod, setSelectedSortingMethod] =
-    useState<SortingMethod>(SortingMethod.Any);
+    useState<SortingMethod>(SortingMethod.None);
 
   return (
     <QueryClientProvider client={reactQueryClient}>

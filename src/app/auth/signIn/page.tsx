@@ -63,7 +63,7 @@ export default function SignInPage() {
               Sign in
             </button>
             <span>
-              Don't have an account?{" "}
+              Dont have an account?{" "}
               <Link href="/auth/signUp" className="text-blue-400 font-bold">
                 sign-up here
               </Link>

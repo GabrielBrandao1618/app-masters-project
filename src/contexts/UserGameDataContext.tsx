@@ -3,6 +3,7 @@
 import {
   ReactNode,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -82,16 +83,24 @@ export function UserGameDataContextProvider({
     };
   }, [user]);
 
-  function isGameFavorite(gameId: number) {
-    return favoriteGames.some((game) => game.id === gameId);
-  }
-  function getGameRating(gameId: number) {
-    const foundGameRating = ratings.find((rating) => rating.gameId === gameId);
-    if (!!foundGameRating) {
-      return foundGameRating.value;
-    }
-    return 0;
-  }
+  const isGameFavorite = useCallback(
+    (gameId: number) => {
+      return favoriteGames.some((game) => game.id === gameId);
+    },
+    [favoriteGames]
+  );
+  const getGameRating = useCallback(
+    (gameId: number) => {
+      const foundGameRating = ratings.find(
+        (rating) => rating.gameId === gameId
+      );
+      if (!!foundGameRating) {
+        return foundGameRating.value;
+      }
+      return 0;
+    },
+    [ratings]
+  );
 
   return (
     <userGameDataContext.Provider

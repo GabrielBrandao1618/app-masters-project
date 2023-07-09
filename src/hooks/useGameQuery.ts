@@ -32,5 +32,5 @@ export function useGameQuery(
       });
     }
     return data;
-  }, [games, filterGenre, sortingMethod, queryTitle]);
+  }, [games, filterGenre, sortingMethod, queryTitle, getGameRating]);
 }

@@ -1,5 +1,5 @@
 ![A picture of a website containing lots of cards showing all kinds of games](./assets/app-masters-game-store1.png)
-![A picture of a website containing lots of cards showing search results to a shooter game with the query 'ap'](./assets/app-masters-game-store2.png)
+![A picture of a website containing lots of cards showing marked as favorite and filtered by the search 'Mul', only showing one result](./assets/app-masters-game-store2.png)
 
 ## Features
 
@@ -12,6 +12,11 @@
 - Filter by genre
 - Search by title
 - 5 Seconds load timeout
+- Authentication with email/password
+- Save favorite games
+- Rate games from 1 to 5 stars
+- View the games without having to be authenticated
+- Sort games by rating
 
 ## References
 

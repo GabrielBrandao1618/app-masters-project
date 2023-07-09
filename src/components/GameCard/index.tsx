@@ -34,7 +34,7 @@ export function GameCard({
   rating,
 }: GameCardProps) {
   const { user } = useAuth();
-  const { replace } = useRouter();
+  const { push } = useRouter();
 
   async function toggleIsFavorite() {
     if (!!user) {
@@ -56,7 +56,7 @@ export function GameCard({
         publisher,
       });
     }
-    replace("/auth/signIn");
+    push("/auth/signIn");
   }
 
   async function saveRating(value: number) {
@@ -64,7 +64,7 @@ export function GameCard({
       const dataRef = ref(firebaseDb, `${user.uid}/ratings/${id}`);
       return set(dataRef, value);
     }
-    replace("/auth/signIn");
+    push("/auth/signIn");
   }
 
   return (

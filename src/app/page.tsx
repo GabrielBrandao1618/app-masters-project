@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { GamesSection } from "@/components/layout/GamesSection";
 import { GameGenre, gameGenres } from "@/model/GameGenre";

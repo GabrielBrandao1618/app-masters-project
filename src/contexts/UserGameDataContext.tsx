@@ -69,6 +69,9 @@ export function UserGameDataContextProvider({
         }
       });
       unsubscribeFns.push(unsubscribeRatings);
+    } else {
+      setRatings([]);
+      setFavoriteGames([]);
     }
 
     return () => {

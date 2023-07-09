@@ -21,6 +21,7 @@ export default function FavoritesPage() {
                   {...game}
                   isFavorite={isGameFavorite(game.id)}
                   rating={getGameRating(game.id)}
+                  key={game.id}
                 />
               );
             })}

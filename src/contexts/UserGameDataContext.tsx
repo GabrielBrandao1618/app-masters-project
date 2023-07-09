@@ -50,8 +50,9 @@ export function UserGameDataContextProvider({
           const parsedSnapshot: Game[] = Object.entries(val).map(([_, val]) => {
             return val;
           }) as Game[];
-          setFavoriteGames(parsedSnapshot);
+          return setFavoriteGames(parsedSnapshot);
         }
+        setFavoriteGames([]);
       });
       unsubscribeFns.push(unsubscribeFavorites);
 

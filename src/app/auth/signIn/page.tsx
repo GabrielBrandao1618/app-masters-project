@@ -9,6 +9,7 @@ import { useState } from "react";
 import { FirebaseError } from "firebase/app";
 import { Header } from "@/components/Header";
 import Link from "next/link";
+import { getFirebaseErrorMessage } from "@/lib/utils/firebaseErrorMessage";
 
 export default function SignInPage() {
   const { replace } = useRouter();
@@ -22,7 +23,7 @@ export default function SignInPage() {
       await signIn(data.email, data.password);
     } catch (err) {
       if (err instanceof FirebaseError) {
-        setErrorLabelText(err.code);
+        setErrorLabelText(getFirebaseErrorMessage(err.code));
       }
       return;
     }
@@ -67,7 +68,9 @@ export default function SignInPage() {
                 sign-up here
               </Link>
             </span>
-            <span>{errorLabelText}</span>
+            <span className="w-full text-center text-red-500">
+              {errorLabelText}
+            </span>
           </div>
         </form>
       </main>

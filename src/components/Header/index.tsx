@@ -1,17 +1,29 @@
 "use client";
 
-import { redirect, useRouter } from "next/navigation";
+import { redirect, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 
 import { useAuth } from "@/contexts/AuthContext";
 
 export function Header() {
   const { user, signOut } = useAuth();
+  const pathname = usePathname();
   const { replace } = useRouter();
   return (
     <header className="p-4 flex gap-4 justify-end items-center fixed bg-transparent backdrop-blur-md w-full z-10">
+      <Link
+        href="/"
+        className={`${pathname === "/" ? "font-bold" : "font-normal"}`}
+      >
+        Home
+      </Link>
       {!!user && (
-        <Link href="/favorites" className="font-bold">
+        <Link
+          href="/favorites"
+          className={`${
+            pathname === "/favorites" ? "font-bold" : "font-normal"
+          }`}
+        >
           Favorites
         </Link>
       )}

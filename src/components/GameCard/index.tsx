@@ -69,8 +69,8 @@ export function GameCard({
     <AnimatePresence>
       <motion.div
         className="max-w-[400px] min-w-[200px] h-96 flex flex-col"
-        initial={{ translateX: 64, opacity: 0.3 }}
-        whileInView={{ translateX: 0, opacity: 1 }}
+        initial={{ translateY: 64, opacity: 0.3 }}
+        whileInView={{ translateY: 0, opacity: 1 }}
         viewport={{ once: true }}
         transition={{
           duration: 0.3,

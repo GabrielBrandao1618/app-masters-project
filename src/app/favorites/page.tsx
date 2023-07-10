@@ -41,8 +41,8 @@ export default function FavoritesPage() {
             className="border-gray-500 border bg-transparent placeholder:text-gray-500 rounded px-3 py-2 w-full"
             placeholder="Search by game title"
           />
-          <div className="flex w-full gap-2">
-            <div className="flex bg-transparent border border-gray-500 px-4 py-1 gap-2 rounded flex-1">
+          <div className="flex flex-wrap w-full gap-2">
+            <div className="flex bg-transparent border border-gray-500 px-4 py-1 gap-2 rounded flex-1 min-w-[240px]">
               <span>Genre</span>
               <select
                 name="game-genre"
@@ -62,7 +62,7 @@ export default function FavoritesPage() {
                 })}
               </select>
             </div>
-            <div className="flex bg-transparent border border-gray-500 px-4 py-1 gap-2 rounded flex-1">
+            <div className="flex bg-transparent border border-gray-500 px-4 py-1 gap-2 rounded flex-1 min-w-[240px]">
               <span>Sort by</span>
               <select
                 name="sort-method"
@@ -87,7 +87,7 @@ export default function FavoritesPage() {
           </div>
         </section>
         {favoriteGames.length > 0 ? (
-          <div className="md:grid flex flex-col items-center lg:grid-cols-3 md:grid-cols-2 gap-10">
+          <div className="md:grid flex flex-col items-center lg:grid-cols-3 md:grid-cols-2 gap-10 py-8">
             {filteredFavoriteGames.map((game) => {
               return (
                 <GameCard

@@ -9,13 +9,11 @@ import {
   useState,
 } from "react";
 
-import { getDatabase, onValue, ref } from "firebase/database";
+import { getDatabase, onValue, ref, remove, set } from "firebase/database";
 
 import { Game } from "@/model/Game";
 import { useAuth } from "./AuthContext";
-import { firebaseApp } from "@/lib/firebase";
-
-const firebaseDb = getDatabase(firebaseApp);
+import { firebaseDb } from "@/lib/firebase";
 
 interface Rating {
   value: number;
@@ -27,6 +25,8 @@ interface UserGameDataContextValue {
   ratings: Rating[];
   isGameFavorite: (gameId: number) => boolean;
   getGameRating: (gameId: number) => number;
+  toggleFavorite: (game: Game) => Promise<void>;
+  setRating: (rating: Rating) => Promise<void>;
 }
 
 const userGameDataContext = createContext({} as UserGameDataContextValue);
@@ -102,9 +102,40 @@ export function UserGameDataContextProvider({
     [ratings]
   );
 
+  const toggleFavorite = useCallback(
+    async (game: Game) => {
+      if (!!user) {
+        const isFavorite = favoriteGames.some((data) => game.id === data.id);
+        const dataRef = ref(firebaseDb, `${user.uid}/favorites/${game.id}`);
+        if (isFavorite) {
+          return await remove(dataRef);
+        }
+        await set(dataRef, game);
+      }
+    },
+    [favoriteGames, user]
+  );
+
+  const setRating = useCallback(
+    async (rating: Rating) => {
+      if (!!user) {
+        const dataRef = ref(firebaseDb, `${user.uid}/ratings/${rating.gameId}`);
+        set(dataRef, rating.value);
+      }
+    },
+    [user]
+  );
+
   return (
     <userGameDataContext.Provider
-      value={{ favoriteGames, ratings, isGameFavorite, getGameRating }}
+      value={{
+        favoriteGames,
+        ratings,
+        isGameFavorite,
+        getGameRating,
+        toggleFavorite,
+        setRating,
+      }}
     >
       {children}
     </userGameDataContext.Provider>

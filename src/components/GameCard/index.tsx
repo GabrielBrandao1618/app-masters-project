@@ -1,20 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getDatabase, set, ref, remove } from "firebase/database";
 import { AnimatePresence, motion } from "framer-motion";
 import { Heart } from "@phosphor-icons/react";
 
 import { Game } from "@/model/Game";
 import { StarRater } from "../StarRater";
-import { firebaseApp } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-
-const firebaseDb = getDatabase(firebaseApp);
+import { useUserGameData } from "@/contexts/UserGameDataContext";
 
 type GameCardProps = Game & {
   isFavorite: boolean;
   rating: number;
+  onFavoriteClick?: (value: boolean) => Promise<void> | void;
+  onRatingClick?: (value: number) => Promise<void> | void;
 };
 export function GameCard({
   title,
@@ -33,14 +32,11 @@ export function GameCard({
 }: GameCardProps) {
   const { user } = useAuth();
   const { push } = useRouter();
+  const { toggleFavorite, setRating } = useUserGameData();
 
   async function toggleIsFavorite() {
     if (!!user) {
-      const dataRef = ref(firebaseDb, `${user.uid}/favorites/${id}`);
-      if (isFavorite) {
-        return await remove(dataRef);
-      }
-      return await set(dataRef, {
+      return await toggleFavorite({
         title,
         thumbnail,
         game_url,
@@ -59,8 +55,10 @@ export function GameCard({
 
   async function saveRating(value: number) {
     if (!!user) {
-      const dataRef = ref(firebaseDb, `${user.uid}/ratings/${id}`);
-      return set(dataRef, value);
+      return await setRating({
+        gameId: id,
+        value: value,
+      });
     }
     push("/auth/signIn");
   }

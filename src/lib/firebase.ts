@@ -1,4 +1,5 @@
 import { initializeApp, FirebaseOptions } from "firebase/app";
+import { getDatabase } from "firebase/database";
 
 const firebaseConfig: FirebaseOptions = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -11,3 +12,4 @@ const firebaseConfig: FirebaseOptions = {
 };
 
 export const firebaseApp = initializeApp(firebaseConfig);
+export const firebaseDb = getDatabase(firebaseApp);

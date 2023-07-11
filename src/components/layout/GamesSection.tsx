@@ -22,7 +22,8 @@ export function GamesSection({
   filterGenre,
   sortingMethod,
 }: GamesSectionProps) {
-  const { isGameFavorite, getGameRating } = useUserGameData();
+  const { isGameFavorite, getGameRating, setRating, toggleFavorite } =
+    useUserGameData();
   const { data: queryResult, isLoading } = useQuery({
     queryFn: fetchGames,
     staleTime: 1000 * 60, // 60 seconds,
@@ -91,6 +92,13 @@ export function GamesSection({
             isFavorite={isGameFavorite(game.id)}
             rating={getGameRating(game.id)}
             key={game.id}
+            onFavoriteClick={() => toggleFavorite(game)}
+            onRatingClick={(value) =>
+              setRating({
+                gameId: game.id,
+                value,
+              })
+            }
           />
         );
       })}

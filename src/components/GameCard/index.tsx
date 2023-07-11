@@ -5,17 +5,14 @@ import { Heart } from "@phosphor-icons/react";
 
 import { Game } from "@/model/Game";
 import { StarRater } from "../StarRater";
-import { useUserGameData } from "@/contexts/UserGameDataContext";
 
 type GameCardProps = Game & {
   isFavorite: boolean;
   rating: number;
-  onFavoriteClick?: (value: boolean) => Promise<void> | void;
-  onRatingClick?: (value: number) => Promise<void> | void;
+  onFavoriteClick: () => Promise<void> | void;
+  onRatingClick: (value: number) => Promise<void> | void;
 };
 export function GameCard(props: GameCardProps) {
-  const { toggleFavorite, setRating } = useUserGameData();
-
   return (
     <AnimatePresence>
       <motion.div
@@ -62,12 +59,9 @@ export function GameCard(props: GameCardProps) {
               size={24}
               className="cursor-pointer text-red-700"
               weight={props.isFavorite ? "fill" : "regular"}
-              onClick={() => toggleFavorite(props)}
+              onClick={props.onFavoriteClick}
             />
-            <StarRater
-              value={props.rating}
-              setValue={(value) => setRating({ gameId: props.id, value })}
-            />
+            <StarRater value={props.rating} setValue={props.onRatingClick} />
           </div>
           <span className="bg-rose-600 text-sm text-rose-100 flex-0 px-1 rounded font-bold">
             {props.genre}

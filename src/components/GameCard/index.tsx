@@ -12,7 +12,7 @@ type GameCardProps = Game & {
   onFavoriteClick: () => Promise<void> | void;
   onRatingClick: (value: number) => Promise<void> | void;
 };
-export function GameCard(props: GameCardProps) {
+export async function GameCard(props: GameCardProps) {
   return (
     <AnimatePresence>
       <motion.div

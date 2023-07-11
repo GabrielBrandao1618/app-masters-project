@@ -75,7 +75,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <div className="mt-4">
+        <div className="mt-4 w-full">
           <GamesSection
             query={searchText}
             filterGenre={selectedGameGenre}

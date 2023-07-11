@@ -1,15 +1,15 @@
 "use client";
 
 import { GameCard } from "@/components/GameCard";
-import { Game } from "@/model/Game";
 import { GameGenre } from "@/model/GameGenre";
 import { useQuery } from "react-query";
 import { PulseLoader } from "react-spinners";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useUserGameData } from "@/contexts/UserGameDataContext";
 import { SortingMethod } from "@/model/SortingMethod";
 import { useGameQuery } from "@/hooks/useGameQuery";
 import { fetchGames } from "@/lib/api/fetchGames";
+import { SkeletonGameCard } from "../GameCard/Skeleton";
 
 interface GamesSectionProps {
   query: string;
@@ -26,7 +26,7 @@ export function GamesSection({
     useUserGameData();
   const { data: queryResult, isLoading } = useQuery({
     queryFn: fetchGames,
-    staleTime: 1000 * 60, // 60 seconds,
+    staleTime: Infinity,
   });
 
   const [timeoutExcepted, setTimeoutExcepted] = useState(false);
@@ -84,22 +84,25 @@ export function GamesSection({
   }
 
   return (
-    <div className="md:grid flex flex-col items-center lg:grid-cols-3 md:grid-cols-2 gap-10 py-8">
+    <div className="md:grid flex w-full flex-col items-center lg:grid-cols-3 md:grid-cols-2 gap-10 py-8">
       {games.map((game) => {
         return (
-          <GameCard
-            {...game}
-            isFavorite={isGameFavorite(game.id)}
-            rating={getGameRating(game.id)}
-            key={game.id}
-            onFavoriteClick={() => toggleFavorite(game)}
-            onRatingClick={(value) =>
-              setRating({
-                gameId: game.id,
-                value,
-              })
-            }
-          />
+          <Suspense fallback={<SkeletonGameCard />}>
+            {/*@ts-ignore async function component*/}
+            <GameCard
+              {...game}
+              isFavorite={isGameFavorite(game.id)}
+              rating={getGameRating(game.id)}
+              key={game.id}
+              onFavoriteClick={() => toggleFavorite(game)}
+              onRatingClick={(value) =>
+                setRating({
+                  gameId: game.id,
+                  value,
+                })
+              }
+            />
+          </Suspense>
         );
       })}
     </div>

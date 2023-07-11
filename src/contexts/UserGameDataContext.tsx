@@ -9,11 +9,12 @@ import {
   useState,
 } from "react";
 
-import { getDatabase, onValue, ref, remove, set } from "firebase/database";
+import { onValue, ref, remove, set } from "firebase/database";
 
 import { Game } from "@/model/Game";
 import { useAuth } from "./AuthContext";
 import { firebaseDb } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
 
 interface Rating {
   value: number;
@@ -40,6 +41,7 @@ export function UserGameDataContextProvider({
   const { user } = useAuth();
   const [favoriteGames, setFavoriteGames] = useState<Game[]>([]);
   const [ratings, setRatings] = useState<Rating[]>([]);
+  const { push } = useRouter();
 
   useEffect(() => {
     const unsubscribeFns: (() => void)[] = [];
@@ -110,8 +112,9 @@ export function UserGameDataContextProvider({
         if (isFavorite) {
           return await remove(dataRef);
         }
-        await set(dataRef, game);
+        return await set(dataRef, game);
       }
+      return push("/auth/signIn");
     },
     [favoriteGames, user]
   );
@@ -120,8 +123,9 @@ export function UserGameDataContextProvider({
     async (rating: Rating) => {
       if (!!user) {
         const dataRef = ref(firebaseDb, `${user.uid}/ratings/${rating.gameId}`);
-        set(dataRef, rating.value);
+        return set(dataRef, rating.value);
       }
+      return push("/auth/signIn");
     },
     [user]
   );

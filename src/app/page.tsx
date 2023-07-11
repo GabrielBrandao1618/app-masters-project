@@ -75,13 +75,11 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <div className="mt-4 w-full">
-          <GamesSection
-            query={searchText}
-            filterGenre={selectedGameGenre}
-            sortingMethod={selectedSortingMethod}
-          />
-        </div>
+        <GamesSection
+          query={searchText}
+          filterGenre={selectedGameGenre}
+          sortingMethod={selectedSortingMethod}
+        />
       </main>
     </ReactQueryProvider>
   );

@@ -14,12 +14,11 @@ type GameCardProps = Game & {
 };
 export async function GameCard(props: GameCardProps) {
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="popLayout">
       <motion.div
         className="max-w-[400px] min-w-[200px] h-96 flex flex-col"
-        initial={{ translateY: 64, opacity: 0.3 }}
-        whileInView={{ translateY: 0, opacity: 1 }}
-        viewport={{ once: true }}
+        initial={{ y: 64, opacity: 0.3 }}
+        whileInView={{ y: 0, opacity: 1 }}
         transition={{
           duration: 0.3,
         }}

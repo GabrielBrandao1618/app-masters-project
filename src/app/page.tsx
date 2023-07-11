@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
 import { GamesSection } from "@/components/layout/GamesSection";
 import { GameGenre, gameGenres } from "@/model/GameGenre";
 import { Header } from "@/components/Header";
@@ -10,8 +9,7 @@ import {
   getSortingMethodText,
   sortingMethods,
 } from "@/model/SortingMethod";
-
-const reactQueryClient = new QueryClient();
+import { ReactQueryProvider } from "@/lib/reactQuery";
 
 export default function Home() {
   const [searchText, setSearchText] = useState("");
@@ -20,7 +18,7 @@ export default function Home() {
     useState<SortingMethod>(SortingMethod.None);
 
   return (
-    <QueryClientProvider client={reactQueryClient}>
+    <ReactQueryProvider>
       <Header />
       <main className="md:px-20 px-4 flex flex-col items-center">
         <section className="flex flex-col items-center w-full max-w-[640px] gap-2 py-16">
@@ -77,14 +75,12 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <div className="mt-4">
-          <GamesSection
-            query={searchText}
-            filterGenre={selectedGameGenre}
-            sortingMethod={selectedSortingMethod}
-          />
-        </div>
+        <GamesSection
+          query={searchText}
+          filterGenre={selectedGameGenre}
+          sortingMethod={selectedSortingMethod}
+        />
       </main>
-    </QueryClientProvider>
+    </ReactQueryProvider>
   );
 }

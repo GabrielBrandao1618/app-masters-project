@@ -1,35 +1,16 @@
 "use client";
 
 import { GameCard } from "@/components/GameCard";
-import { Game } from "@/model/Game";
 import { GameGenre } from "@/model/GameGenre";
 import { useQuery } from "react-query";
 import { PulseLoader } from "react-spinners";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useUserGameData } from "@/contexts/UserGameDataContext";
 import { SortingMethod } from "@/model/SortingMethod";
 import { useGameQuery } from "@/hooks/useGameQuery";
+import { fetchGames } from "@/lib/api/fetchGames";
+import { SkeletonGameCard } from "../GameCard/Skeleton";
 
-async function fetchGames() {
-  const response = await fetch(
-    process.env.API_URL ??
-      "https://games-test-api-81e9fb0d564a.herokuapp.com/api/data/",
-    {
-      headers: {
-        "dev-email-address":
-          process.env.DEV_EMAIL_ADDRESS ?? "biel.brandao2004@gmail.com",
-      },
-    }
-  );
-  let data: Game[] = [];
-  if (response.ok) {
-    data = await response.json();
-  }
-  return {
-    json: data,
-    response: response,
-  };
-}
 interface GamesSectionProps {
   query: string;
   filterGenre: GameGenre;
@@ -41,7 +22,8 @@ export function GamesSection({
   filterGenre,
   sortingMethod,
 }: GamesSectionProps) {
-  const { isGameFavorite, getGameRating, ratings } = useUserGameData();
+  const { isGameFavorite, getGameRating, setRating, toggleFavorite } =
+    useUserGameData();
   const { data: queryResult, isLoading } = useQuery({
     queryFn: fetchGames,
     staleTime: Infinity,
@@ -102,15 +84,24 @@ export function GamesSection({
   }
 
   return (
-    <div className="md:grid flex flex-col items-center lg:grid-cols-3 md:grid-cols-2 gap-10 py-8">
+    <div className="md:grid flex w-full flex-col items-center lg:grid-cols-3 md:grid-cols-2 gap-10 gap-y-24 py-8 min-h-[640px]">
       {games.map((game) => {
         return (
-          <GameCard
-            {...game}
-            isFavorite={isGameFavorite(game.id)}
-            rating={getGameRating(game.id)}
-            key={game.id}
-          />
+          <Suspense fallback={<SkeletonGameCard />} key={game.id}>
+            {/*@ts-ignore async function component*/}
+            <GameCard
+              {...game}
+              isFavorite={isGameFavorite(game.id)}
+              rating={getGameRating(game.id)}
+              onFavoriteClick={() => toggleFavorite(game)}
+              onRatingClick={(value) =>
+                setRating({
+                  gameId: game.id,
+                  value,
+                })
+              }
+            />
+          </Suspense>
         );
       })}
     </div>

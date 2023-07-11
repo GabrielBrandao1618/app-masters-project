@@ -1,84 +1,31 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getDatabase, set, ref, remove } from "firebase/database";
 import { AnimatePresence, motion } from "framer-motion";
 import { Heart } from "@phosphor-icons/react";
 
 import { Game } from "@/model/Game";
 import { StarRater } from "../StarRater";
-import { firebaseApp } from "@/lib/firebase";
-import { useAuth } from "@/contexts/AuthContext";
-import { useRouter } from "next/navigation";
-
-const firebaseDb = getDatabase(firebaseApp);
 
 type GameCardProps = Game & {
   isFavorite: boolean;
   rating: number;
+  onFavoriteClick: () => Promise<void> | void;
+  onRatingClick: (value: number) => Promise<void> | void;
 };
-export function GameCard({
-  title,
-  thumbnail,
-  game_url,
-  developer,
-  freetogame_profile_url,
-  genre,
-  platform,
-  release_date,
-  short_description,
-  id,
-  publisher,
-  isFavorite,
-  rating,
-}: GameCardProps) {
-  const { user } = useAuth();
-  const { push } = useRouter();
-
-  async function toggleIsFavorite() {
-    if (!!user) {
-      const dataRef = ref(firebaseDb, `${user.uid}/favorites/${id}`);
-      if (isFavorite) {
-        return await remove(dataRef);
-      }
-      return await set(dataRef, {
-        title,
-        thumbnail,
-        game_url,
-        developer,
-        freetogame_profile_url,
-        genre,
-        platform,
-        release_date,
-        short_description,
-        id,
-        publisher,
-      });
-    }
-    push("/auth/signIn");
-  }
-
-  async function saveRating(value: number) {
-    if (!!user) {
-      const dataRef = ref(firebaseDb, `${user.uid}/ratings/${id}`);
-      return set(dataRef, value);
-    }
-    push("/auth/signIn");
-  }
-
+export async function GameCard(props: GameCardProps) {
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="popLayout">
       <motion.div
         className="max-w-[400px] min-w-[200px] h-96 flex flex-col"
-        initial={{ translateY: 64, opacity: 0.3 }}
-        whileInView={{ translateY: 0, opacity: 1 }}
-        viewport={{ once: true }}
+        initial={{ y: 64, opacity: 0.3 }}
+        whileInView={{ y: 0, opacity: 1 }}
         transition={{
           duration: 0.3,
         }}
       >
-        <h3 className="text-2xl mb-1 font-bold">{title}</h3>
+        <h3 className="text-2xl mb-1 font-bold">{props.title}</h3>
         <Link
-          href={game_url}
+          href={props.game_url}
           target="_blank"
           className="flex-1 w-full flex flex-col"
         >
@@ -92,8 +39,8 @@ export function GameCard({
               }}
             >
               <Image
-                src={thumbnail}
-                alt={`The thumbnail of the game ${title}`}
+                src={props.thumbnail}
+                alt={`The thumbnail of the game ${props.title}`}
                 fill
                 className="object-cover"
                 sizes="36"
@@ -102,28 +49,30 @@ export function GameCard({
           </div>
         </Link>
         <div className="mt-1 flex flex-col items-start gap-1">
-          <span className="text-purple-600 font-bold text-sm">{developer}</span>
-          <p className="text-xs text-gray-400">{short_description}</p>
+          <span className="text-purple-600 font-bold text-sm">
+            {props.developer}
+          </span>
+          <p className="text-xs text-gray-400">{props.short_description}</p>
           <div className="w-full flex justify-between">
             <Heart
               size={24}
               className="cursor-pointer text-red-700"
-              weight={isFavorite ? "fill" : "regular"}
-              onClick={toggleIsFavorite}
+              weight={props.isFavorite ? "fill" : "regular"}
+              onClick={props.onFavoriteClick}
             />
-            <StarRater value={rating} setValue={saveRating} />
+            <StarRater value={props.rating} setValue={props.onRatingClick} />
           </div>
           <span className="bg-rose-600 text-sm text-rose-100 flex-0 px-1 rounded font-bold">
-            {genre}
+            {props.genre}
           </span>
           <div className="flex flex-row w-full justify-between">
-            <span className="text-xs">Platform: {platform}</span>
+            <span className="text-xs">Platform: {props.platform}</span>
             <span className="text-xs text-gray-300">
-              Release: {release_date}
+              Release: {props.release_date}
             </span>
           </div>
           <Link
-            href={freetogame_profile_url}
+            href={props.freetogame_profile_url}
             target="_blank"
             className="text-blue-500 text-sm font-bold underline"
           >

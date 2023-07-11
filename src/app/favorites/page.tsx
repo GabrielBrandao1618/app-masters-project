@@ -1,6 +1,7 @@
 "use client";
 
 import { GameCard } from "@/components/GameCard";
+import { SkeletonGameCard } from "@/components/GameCard/Skeleton";
 import { Header } from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserGameData } from "@/contexts/UserGameDataContext";
@@ -11,10 +12,16 @@ import {
   getSortingMethodText,
   sortingMethods,
 } from "@/model/SortingMethod";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 export default function FavoritesPage() {
-  const { favoriteGames, isGameFavorite, getGameRating } = useUserGameData();
+  const {
+    favoriteGames,
+    isGameFavorite,
+    getGameRating,
+    toggleFavorite,
+    setRating,
+  } = useUserGameData();
   const [searchText, setSearchText] = useState("");
   const [selectedGameGenre, setSelectedGameGenre] = useState<GameGenre>("any");
   const [selectedSortingMethod, setSelectedSortingMethod] =
@@ -87,15 +94,24 @@ export default function FavoritesPage() {
           </div>
         </section>
         {favoriteGames.length > 0 ? (
-          <div className="md:grid flex flex-col items-center lg:grid-cols-3 md:grid-cols-2 gap-10 py-8">
+          <div className="md:grid flex flex-col w-full items-center lg:grid-cols-3 md:grid-cols-2 gap-10 py-8">
             {filteredFavoriteGames.map((game) => {
               return (
-                <GameCard
-                  {...game}
-                  isFavorite={isGameFavorite(game.id)}
-                  rating={getGameRating(game.id)}
-                  key={game.id}
-                />
+                <Suspense key={game.id} fallback={<SkeletonGameCard />}>
+                  {/*@ts-ignore async function component */}
+                  <GameCard
+                    {...game}
+                    isFavorite={isGameFavorite(game.id)}
+                    rating={getGameRating(game.id)}
+                    onFavoriteClick={() => toggleFavorite(game)}
+                    onRatingClick={(value) =>
+                      setRating({
+                        gameId: game.id,
+                        value,
+                      })
+                    }
+                  />
+                </Suspense>
               );
             })}
           </div>

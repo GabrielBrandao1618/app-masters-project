@@ -87,13 +87,12 @@ export function GamesSection({
     <div className="md:grid flex w-full flex-col items-center lg:grid-cols-3 md:grid-cols-2 gap-10 gap-y-24 py-8 min-h-[640px]">
       {games.map((game) => {
         return (
-          <Suspense fallback={<SkeletonGameCard />}>
+          <Suspense fallback={<SkeletonGameCard />} key={game.id}>
             {/*@ts-ignore async function component*/}
             <GameCard
               {...game}
               isFavorite={isGameFavorite(game.id)}
               rating={getGameRating(game.id)}
-              key={game.id}
               onFavoriteClick={() => toggleFavorite(game)}
               onRatingClick={(value) =>
                 setRating({

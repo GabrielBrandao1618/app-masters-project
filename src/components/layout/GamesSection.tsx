@@ -9,27 +9,8 @@ import { useEffect, useState } from "react";
 import { useUserGameData } from "@/contexts/UserGameDataContext";
 import { SortingMethod } from "@/model/SortingMethod";
 import { useGameQuery } from "@/hooks/useGameQuery";
+import { fetchGames } from "@/lib/api/fetchGames";
 
-async function fetchGames() {
-  const response = await fetch(
-    process.env.API_URL ??
-      "https://games-test-api-81e9fb0d564a.herokuapp.com/api/data/",
-    {
-      headers: {
-        "dev-email-address":
-          process.env.DEV_EMAIL_ADDRESS ?? "biel.brandao2004@gmail.com",
-      },
-    }
-  );
-  let data: Game[] = [];
-  if (response.ok) {
-    data = await response.json();
-  }
-  return {
-    json: data,
-    response: response,
-  };
-}
 interface GamesSectionProps {
   query: string;
   filterGenre: GameGenre;
@@ -41,10 +22,10 @@ export function GamesSection({
   filterGenre,
   sortingMethod,
 }: GamesSectionProps) {
-  const { isGameFavorite, getGameRating, ratings } = useUserGameData();
+  const { isGameFavorite, getGameRating } = useUserGameData();
   const { data: queryResult, isLoading } = useQuery({
     queryFn: fetchGames,
-    staleTime: Infinity,
+    staleTime: 1000 * 60, // 60 seconds,
   });
 
   const [timeoutExcepted, setTimeoutExcepted] = useState(false);

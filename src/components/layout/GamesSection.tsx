@@ -84,7 +84,7 @@ export function GamesSection({
   }
 
   return (
-    <div className="md:grid flex w-full flex-col items-center lg:grid-cols-3 md:grid-cols-2 gap-10 gap-y-24 py-8 min-h-[640px]">
+    <div className="md:grid flex w-full flex-col items-center lg:grid-cols-3 md:grid-cols-2 gap-10 py-8 min-h-[640px]">
       {games.map((game) => {
         return (
           <Suspense fallback={<SkeletonGameCard />} key={game.id}>

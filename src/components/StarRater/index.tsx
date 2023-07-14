@@ -8,7 +8,7 @@ interface StarRaterProps {
 export function StarRater({ value, setValue }: StarRaterProps) {
   return (
     <div className="flex">
-      {[1, 2, 3, 4, 5].map((val) => {
+      {[1, 2, 3, 4].map((val) => {
         return (
           <Star
             weight={val <= value ? "fill" : "regular"}

@@ -16,6 +16,9 @@ export function StarRater({ value, setValue }: StarRaterProps) {
             size={24}
             className="cursor-pointer text-yellow-400"
             onClick={() => {
+              if (value === val && val === 1) {
+                return setValue(0);
+              }
               setValue(val);
             }}
           />
